@@ -1,0 +1,13 @@
+#template {
+#  source = "/etc/consul-template.d/nginxcert.tpl"
+#  destination = "/etc/nginx/certs/nginx.crt"
+#  perms = 0400
+#  command = "systemctl reload nginx"
+#}
+
+{{- with pkiCert "pki_int/issue/nginx" "ttl=200h" "common_name=foo.example.com" -}}
+{{ .Cert }}
+{{ .CA }}
+{{ if .Key }}
+{{ .Key  | writeToFile "/etc/nginx/certs/nginx.key" "root" "root" "0400" }}
+{{ end }}
